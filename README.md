@@ -1,7 +1,7 @@
 Farmer
 ======
 
-an async task execution app based on ansible
+an asynchronous task execution app based on ansible
 
 # First Of All !
 
