@@ -58,9 +58,10 @@ class Task(models.Model):
             runner = Runner(module_name = 'shell', module_args = self.cmd, \
                 pattern = self.inventory, sudo = self.sudo)
 
-            results, poller = runner.run_async(time_limit = 5)
+            _, poller = runner.run_async(time_limit = 5)
             poller.wait(WORKER_TIMEOUT, poll_interval = 2)
             results = poller.results.get('contacted')
+
             for host, result in results.items():
                 job = self.job_set.get(host = host)
                 job.start = result.get('start')
