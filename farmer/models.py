@@ -52,7 +52,7 @@ class Task(models.Model):
 
             # initial jobs
             for host in map(lambda i: i.name, Inventory().get_hosts(pattern = self.inventory)):
-                self.job_set.add(Job(host = host, cmd = self.cmd))
+                self.job_set.add(Job(host = host, cmd = self.cmd, start = datetime.now()))
             self.save()
 
             runner = Runner(module_name = 'shell', module_args = self.cmd, \
