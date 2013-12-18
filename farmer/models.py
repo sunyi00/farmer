@@ -6,6 +6,7 @@ import sys
 import time
 import json
 import threading
+from tempfile import mkdtemp
 from datetime import datetime
 
 from django.db import models
@@ -39,15 +40,13 @@ class Task(models.Model):
     start = models.DateTimeField(null = True, blank = False)
     end = models.DateTimeField(null = True, blank = False)
 
+    tmpdir = mkdtemp(prefix = 'ansible_', dir = '/tmp')
+
     @property
     def cmd_shell(self):
         option = self.sudo and '--sudo' or ''
         option += ' -f %s -m shell' % ANSIBLE_FORKS
         return 'ansible %s %s -a "%s"' % (self.inventories, option, self.cmd)
-
-    @property
-    def tmpdir(self):
-        return '/tmp/ansible_%s' % self.id
 
     def run(self):
         if os.fork() == 0:
@@ -65,9 +64,6 @@ class Task(models.Model):
             for host in hosts:
                 self.job_set.add(Job(host = host, cmd = self.cmd))
             self.save()
-
-            # make dir before run thread
-            os.mkdir(self.tmpdir)
 
             # start a thread to monitor self.tmpdir
             t = threading.Thread(target = self.collect_result)
