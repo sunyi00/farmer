@@ -1,25 +1,16 @@
 #coding=utf8
-from __future__ import with_statement
 
 import os
 import sys
 import time
-import json
-import threading
-from tempfile import mkdtemp
 from datetime import datetime
 
 from ansible.runner import Runner
 from ansible.inventory import Inventory
 
 from django.db import models
-from django.utils import six
 
 from farmer.settings import WORKER_TIMEOUT, ANSIBLE_FORKS
-if six.PY3:
-    from subprocess import getstatusoutput
-else:
-    from commands import getstatusoutput
 
 
 class Task(models.Model):
