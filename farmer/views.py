@@ -1,9 +1,7 @@
-import json
-
 from django.shortcuts import render_to_response, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 
-from farmer.models import Task, Job
+from farmer.models import Task
 from farmer.settings import NUMBER_OF_TASK_PER_PAGE
 
 def run_task(request, inventory, cmd):
