@@ -47,7 +47,7 @@ class Task(models.Model):
             self.save()
 
             runner = Runner(module_name = 'shell', module_args = self.cmd, \
-                pattern = self.inventory, sudo = self.sudo)
+                pattern = self.inventory, sudo = self.sudo, forks = ANSIBLE_FORKS)
 
             _, poller = runner.run_async(time_limit = WORKER_TIMEOUT)
 
