@@ -49,18 +49,22 @@ class Task(models.Model):
             runner = Runner(module_name = 'shell', module_args = self.cmd, \
                 pattern = self.inventory, sudo = self.sudo)
 
-            _, poller = runner.run_async(time_limit = 5)
-            poller.wait(WORKER_TIMEOUT, poll_interval = 2)
-            results = poller.results.get('contacted')
+            _, poller = runner.run_async(time_limit = WORKER_TIMEOUT)
 
-            for host, result in results.items():
-                job = self.job_set.get(host = host)
-                job.start = result.get('start')
-                job.end = result.get('end')
-                job.rc = result.get('rc')
-                job.stdout = result.get('stdout')
-                job.stderr = result.get('stderr')
-                job.save()
+            while True:
+                if poller.completed:
+                    break
+                results = poller.poll()
+                results = results.get('contacted')
+                if results:
+                    for host, result in results.items():
+                        job = self.job_set.get(host = host)
+                        job.start = result.get('start')
+                        job.end = result.get('end')
+                        job.rc = result.get('rc')
+                        job.stdout = result.get('stdout')
+                        job.stderr = result.get('stderr')
+                        job.save()
 
             jobs_timeout = filter(lambda job: job.rc is None, self.job_set.all())
             jobs_failed = filter(lambda job: job.rc, self.job_set.all())
