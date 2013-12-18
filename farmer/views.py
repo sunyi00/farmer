@@ -6,9 +6,9 @@ from django.contrib.admin.views.decorators import staff_member_required
 from farmer.models import Task, Job
 from farmer.settings import NUMBER_OF_TASK_PER_PAGE
 
-def run_task(request, inventories, cmd):
+def run_task(request, inventory, cmd):
     task = Task()
-    task.inventories = inventories
+    task.inventory = inventory
     task.cmd = cmd
     task.farmer = request.user.username
     task.run()
@@ -17,11 +17,11 @@ def run_task(request, inventories, cmd):
 @staff_member_required
 def home(request):
     if request.method == 'POST':
-        inventories = request.POST.get('inventories', '')
+        inventory = request.POST.get('inventory', '')
         cmd = request.POST.get('cmd', '')
-        if '' in [inventories.strip(), cmd.strip()]:
+        if '' in [inventory.strip(), cmd.strip()]:
             return redirect('/')
-        run_task(request, inventories, cmd)
+        run_task(request, inventory, cmd)
         return redirect('/')
     else:
         tasks = Task.objects.all().order_by('-id')[:NUMBER_OF_TASK_PER_PAGE]
@@ -49,15 +49,15 @@ def retry(request, id):
     task = Task.objects.get(id = id)
     failure_hosts = [job.host for job in task.job_set.all() if job.rc != 0]
     assert(failure_hosts)
-    inventories = ':'.join(failure_hosts)
-    run_task(request, inventories, task.cmd)
+    inventory = ':'.join(failure_hosts)
+    run_task(request, inventory, task.cmd)
     return redirect('/')
 
 @staff_member_required
 def rerun(request, id):
     assert(request.method == 'GET')
     task = Task.objects.get(id = id)
-    run_task(request, task.inventories, task.cmd)
+    run_task(request, task.inventory, task.cmd)
     return redirect('/')
 
 
