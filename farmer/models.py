@@ -84,7 +84,7 @@ class Task(models.Model):
 
         for job in jobs_timeout:
             job.rc = 1
-            job.stderr = 'TIMEOUT' # marked as 'TIMEOUT'
+            job.stderr = 'JOB TIMEOUT' # marked as 'TIMEOUT'
             job.save()
 
         self.rc = (jobs_timeout or jobs_failed) and 1 or 0
