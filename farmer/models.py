@@ -79,8 +79,8 @@ class Task(models.Model):
 
             time.sleep(1)
 
-        jobs_timeout = filter(lambda job: job.rc is None, self.job_set.all())
-        jobs_failed = filter(lambda job: job.rc, self.job_set.all())
+        jobs_timeout = filter(lambda job: job.rc is None, self.job_set.all()) # rc is None
+        jobs_failed = filter(lambda job: job.rc, self.job_set.all()) # rc > 0
 
         for job in jobs_timeout:
             job.rc = 1
@@ -103,7 +103,7 @@ class Task(models.Model):
             sys.stderr.write(str(e) + '\n')
 
     def __unicode__(self):
-        return self.inventory + ' -> ' + self.cmd
+        return self.cmd + ' @ ' + self.inventory
 
 class Job(models.Model):
     task = models.ForeignKey(Task)
