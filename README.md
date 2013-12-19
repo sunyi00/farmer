@@ -32,8 +32,8 @@ python manage.py runserver 0.0.0.0:6969
 view it in `http://your-domain:6969`
 
 # Features
-* asynchronous task execution with os.fork(), threading.Thread
+* asynchronous task execution with ansible python bindings
+* show task / job status in realtime
 * `retry` cmd on those failed hosts by a `retry` button
 * `rerun` any task
-* details output (stdout / stderr) of each task
 
