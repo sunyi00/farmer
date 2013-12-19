@@ -149,6 +149,10 @@ table tbody tr td a.anchor:hover {
   text-align: right;
 }
 
+.tr-yes {
+  opacity: 0.8;
+}
+
 
 
 
