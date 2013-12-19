@@ -3,6 +3,7 @@
 import os
 import sys
 import time
+from psutil import Process
 from datetime import datetime
 
 from ansible.runner import Runner
@@ -51,20 +52,29 @@ class Task(models.Model):
 
             _, poller = runner.run_async(time_limit = WORKER_TIMEOUT)
 
+            now = time.time()
+
             while True:
+
                 if poller.completed:
                     break
+
+                if time.time() - now > WORKER_TIMEOUT: # TIMEOUT
+                    break
+                    
                 results = poller.poll()
                 results = results.get('contacted')
+
                 if results:
                     for host, result in results.items():
                         job = self.job_set.get(host = host)
-                        job.start = result.get('start')
                         job.end = result.get('end')
                         job.rc = result.get('rc')
                         job.stdout = result.get('stdout')
                         job.stderr = result.get('stderr')
                         job.save()
+
+                time.sleep(1)
 
             jobs_timeout = filter(lambda job: job.rc is None, self.job_set.all())
             jobs_failed = filter(lambda job: job.rc, self.job_set.all())
@@ -79,7 +89,20 @@ class Task(models.Model):
             self.end = datetime.now()
             self.save()
 
-            sys.exit(self.rc)
+            self.done()
+
+    def done(self):
+        try:
+            myself = Process(os.getpid())
+            for child in myself.get_children():
+                child.kill()
+        except Exception as e:
+            sys.stderr.write(str(e) + '\n')
+        finally:
+            try:
+                sys.exit(self.rc)
+            except:
+                pass
 
     def __unicode__(self):
         return self.inventory + ' -> ' + self.cmd
