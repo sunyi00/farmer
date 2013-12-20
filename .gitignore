@@ -1,6 +1,7 @@
 # farmer
 *.db
 *.swp
+
 *.py[cod]
 
 # C extensions
