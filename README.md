@@ -37,4 +37,3 @@ view it in `http://your-domain:6969`
 * `retry` cmd on those failed hosts by a `retry` button
 * `rerun` any task
 * time out support
-
