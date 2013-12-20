@@ -36,4 +36,5 @@ view it in `http://your-domain:6969`
 * show task / job status in realtime
 * `retry` cmd on those failed hosts by a `retry` button
 * `rerun` any task
+* time out support
 
