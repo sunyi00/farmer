@@ -40,19 +40,20 @@ class Task(models.Model):
         t = Thread(target = self._run)
         t.setDaemon(True)
         t.start()
-        
+
     def _run(self):
         self.start = datetime.now()
         self.save()
 
         # initial jobs
-        for host in map(lambda i: i.name, Inventory().get_hosts(pattern = self.inventory)):
-            self.job_set.add(Job(host = host, cmd = self.cmd, start = datetime.now()))
+        for host in Inventory(ANSIBLE_INVENTORY).list_hosts(self.inventory):
+            self.job_set.add(Job(host = host, cmd = self.cmd,
+                                 start = datetime.now()))
         self.save()
 
-        runner = Runner(module_name = 'shell', module_args = self.cmd, \
-            pattern = self.inventory, sudo = self.sudo, forks = ANSIBLE_FORKS, \
-            host_list = ANSIBLE_INVENTORY)
+        runner = Runner(module_name = 'shell', module_args = self.cmd,
+                        pattern = self.inventory, sudo = self.sudo,
+                        forks = ANSIBLE_FORKS, host_list = ANSIBLE_INVENTORY)
 
         _, poller = runner.run_async(time_limit = WORKER_TIMEOUT)
 
@@ -60,12 +61,9 @@ class Task(models.Model):
 
         while True:
 
-            if poller.completed:
+            if poller.completed or time.time() - now > WORKER_TIMEOUT: # TIMEOUT
                 break
 
-            if time.time() - now > WORKER_TIMEOUT: # TIMEOUT
-                break
-                
             results = poller.poll()
             results = results.get('contacted')
 
@@ -112,11 +110,9 @@ class Job(models.Model):
     cmd = models.TextField(null = False, blank = False)
     start = models.DateTimeField(null = True, blank = False)
     end = models.DateTimeField(null = True, blank = False)
-    rc = models.IntegerField(null = True) 
+    rc = models.IntegerField(null = True)
     stdout = models.TextField(null = True)
     stderr = models.TextField(null = True)
 
     def __unicode__(self):
         return self.host + ' : ' + self.cmd
-
-
