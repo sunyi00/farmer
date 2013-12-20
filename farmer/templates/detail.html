@@ -3,7 +3,7 @@
 <h1>
     <span class = 'white-text'>There are {{ jobs | length }} jobs in total</span>
 {% if task.rc == 0 or task.rc %}
-    , <span class = 'green-text'>{{ jobs_succeed | length }} succeed</span>, <span class = 'red-text'>{{ jobs_failed | length }} failed</span>
+    , <span class = 'green-text'>{{ jobs_succeed | length }} succeed</span> , <span class = 'red-text'>{{ jobs_failed | length }} failed</span>
 {% endif %}
 .
 </h1>
