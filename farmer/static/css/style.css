@@ -145,6 +145,10 @@ table tbody tr td a.anchor:hover {
   opacity: 0.8;
 }
 
+.tr-yes:hover {
+  opacity: 1;
+}
+
 
 
 
