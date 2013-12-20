@@ -12,7 +12,7 @@ from ansible.inventory import Inventory
 
 from django.db import models
 
-from farmer.settings import WORKER_TIMEOUT, ANSIBLE_FORKS
+from farmer.settings import WORKER_TIMEOUT, ANSIBLE_FORKS, ANSIBLE_INVENTORY
 
 
 class Task(models.Model):
@@ -51,7 +51,8 @@ class Task(models.Model):
         self.save()
 
         runner = Runner(module_name = 'shell', module_args = self.cmd, \
-            pattern = self.inventory, sudo = self.sudo, forks = ANSIBLE_FORKS)
+            pattern = self.inventory, sudo = self.sudo, forks = ANSIBLE_FORKS, \
+            host_list = ANSIBLE_INVENTORY)
 
         _, poller = runner.run_async(time_limit = WORKER_TIMEOUT)
 
