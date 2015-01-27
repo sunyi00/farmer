@@ -16,7 +16,7 @@ see: http://www.ansibleworks.com/docs/intro_getting_started.html
 # Running
 
 ```
-git clone https://github.com/douban/farmer.git
+git clone https://github.com/huoxy/farmer.git
 cd farmer
 python manage.py syncdb
 ```
