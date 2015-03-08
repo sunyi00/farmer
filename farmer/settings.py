@@ -11,13 +11,13 @@ MANAGERS = ADMINS
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
-        'NAME': 'farmer.db',                      # Or path to database file if using sqlite3.
+        'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': 'farmer',                      # Or path to database file if using sqlite3.
         # The following settings are not used with sqlite3:
-        'USER': '',
-        'PASSWORD': '',
-        'HOST': '',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
-        'PORT': '',                      # Set to empty string for default.
+        'USER': 'farmer',
+        'PASSWORD': 'farmer',
+        'HOST': '127.0.0.1',                      # Empty for localhost through domain sockets or '127.0.0.1' for localhost through TCP.
+        'PORT': '3306',                      # Set to empty string for default.
     }
 }
 
@@ -161,5 +161,5 @@ LOGGING = {
 WORKER_TIMEOUT = 5 * 60
 NUMBER_OF_TASK_PER_PAGE = 25
 ANSIBLE_FORKS = 30
-ANSIBLE_INVENTORY = '/etc/ansible/hosts'
+ANSIBLE_INVENTORY = '/usr/local/etc/ansible/hosts'
 
